@@ -87,14 +87,53 @@ function loop(){
         pacman.style.left = originalLeft;
         pacman.style.top = originalTop;
     }
-    
+    moveRedGhost();
+    if(hittest(pacman,redGhost)){clearInterval(loopTimer);}
+}
+
+function moveRedGhost(){
     //Move Red Ghost
     var rgX = parseInt(redGhost.style.left);
-    if(rgX>590){rgX = -30;}
-    redGhost.style.left = rgX + GHOST_SPEED + 'px';
+    var rgY = parseInt(redGhost.style.top);
     
-    if(hitWall(redGhost)){redGhost.style.left = rgX + 'px';}
-    if(hittest(pacman,redGhost)){clearInterval(loopTimer);}
+    var rgNewDirection;
+    
+    var rgOppositeDirection;
+    if(rgDirection=='left'){rgOppositeDirection = 'right';}
+    else if(rgDirection=='right'){rgOppositeDirection = 'left';}
+    else if(rgDirection=='down'){rgOppositeDirection = 'up';}
+    else if(rgDirection=='up'){rgOppositeDirection = 'down';}
+    
+    do{
+        redGhost.style.left = rgX + 'px';
+        redGhost.style.top = rgY + 'px';
+        do{
+            var r=Math.floor(Math.random()*4);
+            if(r==0){rgNewDirection = 'right';}
+            else if(r==1){rgNewDirection = 'left';}
+            else if(r==2){rgNewDirection = 'down';}
+            else if(r==3){rgNewDirection = 'up';}
+        }while(rgNewDirection == rgOppositeDirection);
+        
+        if(rgNewDirection == 'right'){
+            if(rgX > 590){rgX = -30;}
+            redGhost.style.left = rgX + GHOST_SPEED + 'px';
+        }
+        else if(rgNewDirection == 'left'){
+            if(rgX < -30){rgX = -590;}
+            redGhost.style.left = rgX - GHOST_SPEED + 'px';
+        }
+        else if(rgNewDirection == 'down'){
+            if(rgY > 390){rgY = -30;}
+            redGhost.style.top = rgY + GHOST_SPEED + 'px';
+        }
+        else if(rgNewDirection == 'up'){
+            if(rgX < -30){rgX = 390;}
+            redGhost.style.top = rgY - GHOST_SPEED + 'px';
+        }
+    }while(hitWall(redGhost));
+    rgDirection = rgNewDirection;
+
 }
 
 function hitWall(element){
